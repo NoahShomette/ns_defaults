@@ -1,5 +1,5 @@
-pub mod movement;
 pub mod camera;
+pub mod movement;
 pub mod selection;
 
 /// The 2 overall states that a Bevy_GGF game can be in. If you think there should be more then submit

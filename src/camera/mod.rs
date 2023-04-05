@@ -331,8 +331,9 @@ fn update_cursor_world_pos(
     mut cursor_world_pos: ResMut<CursorWorldPos>,
     windows: Query<&Window, With<PrimaryWindow>>,
 ) {
-    let (global_transform, camera) = query.single_mut();
-
+    let Ok( ( global_transform, camera)) = query.get_single_mut() else {
+        return;
+    };
     let Ok(wnd) = windows.get_single() else {
         return;
     };

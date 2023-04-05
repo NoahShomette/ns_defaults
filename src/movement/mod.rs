@@ -1,9 +1,9 @@
-﻿pub mod backend;
+pub mod backend;
 
-use std::collections::HashMap;
 use bevy::prelude::{Component, Entity, EventReader, Query};
 use bevy_ecs_tilemap::prelude::TilePos;
 use bevy_ggf::movement::AvailableMove;
+use std::collections::HashMap;
 
 //TODO: Update this to just a guaranteed ordered vec - ordered meaning the first element
 /// Resource that holds a Hashmap of [`AvailableMove`] structs. These structs should represent verified
