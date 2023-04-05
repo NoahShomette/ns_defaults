@@ -24,7 +24,6 @@ impl Plugin for CameraPlugin {
             .init_resource::<CursorWorldPos>()
             .add_event::<ClickEvent>()
             .add_plugin(InputManagerPlugin::<CameraMovementAction>::default())
-            .add_startup_system(startup)
             .add_system(camera_logic)
             .add_system(click_handler.before(camera_logic))
             .add_system(handle_camera_movement.before(camera_logic))
@@ -115,7 +114,8 @@ impl Default for CameraAndCursorInformation {
     }
 }
 
-fn startup(mut commands: Commands) {
+/// example showing how to set up the minimum camera
+pub fn startup(mut commands: Commands) {
     commands
         .spawn(GGFCamera2dBundle {
             camera_2d_bundle: Camera2dBundle::default(),
