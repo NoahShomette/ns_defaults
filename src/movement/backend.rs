@@ -5,8 +5,14 @@
 // MoveComplete
 
 use std::collections::HashMap;
+use bevy::ecs::system::SystemState;
+use bevy::prelude::{Commands, Entity, EventReader, Mut, Query, World};
+use bevy_ecs_tilemap::prelude::TilePos;
+use bevy_ggf::movement::backend::MovementNodes;
+use bevy_ggf::movement::{AvailableMove, MoveEvent, MovementSystem};
+use bevy_ggf::object::ObjectId;
 use crate::movement::CurrentMovementInformation;
-/*
+
 /// Handles all MoveBegin events. Uses the MovementSystem resource to calculate the move and update
 /// the CurrentMoveInformation resource
 pub(crate) fn handle_move_begin_events(mut world: &mut World) {
@@ -78,5 +84,3 @@ pub(crate) fn handle_move_begin_events(mut world: &mut World) {
 
     system_state.apply(world);
 }
-
- */

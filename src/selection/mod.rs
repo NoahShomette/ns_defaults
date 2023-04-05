@@ -1,15 +1,15 @@
 ﻿//!
 
-use crate::game::{GameId, GameIdProvider};
-use crate::mapping::tiles::TileObjects;
-use crate::movement::{CurrentMovementInformation, MoveEvent};
+use bevy_ggf::mapping::tiles::TileObjects;
 use bevy::app::App;
 use bevy::log::info;
 use bevy::prelude::{
     Component, Entity, EventReader, EventWriter, Local, Plugin, Query, ResMut, Resource,
 };
 use bevy_ecs_tilemap::prelude::{TilePos, TileStorage};
-use crate::mapping::MapId;
+use bevy_ggf::mapping::MapId;
+use bevy_ggf::movement::MoveEvent;
+use bevy_ggf::object::ObjectId;
 
 //TODO: Update this to actually use the Selection Component
 pub struct BggfSelectionPlugin;
@@ -36,7 +36,7 @@ pub struct SelectableEntity;
 
 #[derive(Resource, Default)]
 pub struct CurrentSelectedObject {
-    pub object_entity: Option<GameId>,
+    pub object_entity: Option<ObjectId>,
 }
 
 impl CurrentSelectedObject {
@@ -44,7 +44,7 @@ impl CurrentSelectedObject {
     pub fn deselect_object() {}
 }
 
-pub fn select_object(object_to_select: GameId, mut select_object: ResMut<CurrentSelectedObject>) {
+pub fn select_object(object_to_select: ObjectId, mut select_object: ResMut<CurrentSelectedObject>) {
     select_object.object_entity = Some(object_to_select);
 }
 
@@ -67,13 +67,13 @@ pub enum TrySelectEvents {
 
 /// Sent when a selection is valid.
 pub enum SelectionEvents {
-    ObjectSelected(GameId, MapId),
+    ObjectSelected(ObjectId, MapId),
 }
 
 #[derive(Default, Clone)]
 pub struct LastSelectedTileInfo {
     tile_pos: TilePos,
-    selected_entities: Vec<GameId>,
+    selected_entities: Vec<ObjectId>,
 }
 
 /// Todo update try select events to select on a map and make this get that maps stuff

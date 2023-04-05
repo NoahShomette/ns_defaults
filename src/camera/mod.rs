@@ -10,6 +10,10 @@
 use std::slice::Windows;
 use bevy::render::camera::RenderTarget;
 use bevy::{math::Vec3, prelude::*, render::camera::Camera};
+use bevy::window::PrimaryWindow;
+use leafwing_input_manager::{Actionlike, InputManagerBundle};
+use leafwing_input_manager::prelude::{ActionState, InputManagerPlugin, InputMap, SingleAxis};
+use leafwing_input_manager::user_input::InputKind::Mouse;
 
 /// A plugin containing the systems and resources for the Bevy_GGF camera system to function
 pub struct CameraPlugin;
@@ -136,16 +140,14 @@ fn camera_logic(
         &Camera,
     )>,
     mut camera_cursor_information: ResMut<CameraAndCursorInformation>,
-    windows: Res<Windows>,
+    windows: Query<&Window, With<PrimaryWindow>>,
 ) {
     let (mut ortho, action_state, camera) = query.single_mut();
     const CAMERA_ZOOM_RATE: f32 = 0.05;
 
     // get current window - used to get the mouse cursors position for click events and drag movement
-    let wnd = if let RenderTarget::Window(id) = camera.target {
-        windows.get(id).unwrap()
-    } else {
-        windows.get_primary().unwrap()
+    let Ok(wnd) = windows.get_single() else {
+        return;
     };
     //if the cursor is inside the current window then we want to handle any clicks that it might do
     if let Some(current_cursor_position) = wnd.cursor_position() {
@@ -219,16 +221,13 @@ fn camera_logic(
 fn click_handler(
     mut query: Query<(&GlobalTransform, &Camera)>,
     mut camera_cursor_information: ResMut<CameraAndCursorInformation>,
-    windows: Res<Windows>,
+    windows: Query<&Window, With<PrimaryWindow>>,
     mut click_event_writer: EventWriter<ClickEvent>,
 ) {
     let (global_transform, camera) = query.single_mut();
 
-    // get current window - used to get the mouse cursors position for click events and drag movement
-    let wnd = if let RenderTarget::Window(id) = camera.target {
-        windows.get(id).unwrap()
-    } else {
-        windows.get_primary().unwrap()
+    let Ok(wnd) = windows.get_single() else {
+        return;
     };
     //if the cursor is inside the current window then we want to handle any clicks that it might do
     if let Some(current_cursor_position) = wnd.cursor_position() {
@@ -280,15 +279,12 @@ fn click_handler(
 fn handle_camera_movement(
     mut query: Query<(&mut Transform, &GlobalTransform, &Camera)>,
     camera_cursor_information: ResMut<CameraAndCursorInformation>,
-    windows: Res<Windows>,
+    windows: Query<&Window, With<PrimaryWindow>>,
 ) {
     let (mut transform, global_transform, camera) = query.single_mut();
 
-    // get current window - used to get the mouse cursors position for click events and drag movement
-    let wnd = if let RenderTarget::Window(id) = camera.target {
-        windows.get(id).unwrap()
-    } else {
-        windows.get_primary().unwrap()
+    let Ok(wnd) = windows.get_single() else {
+        return;
     };
 
     //if the cursor is inside the current window then we want to handle any clicks that it might do
@@ -328,15 +324,12 @@ fn handle_camera_movement(
 fn update_cursor_world_pos(
     mut query: Query<(&GlobalTransform, &Camera)>,
     mut cursor_world_pos: ResMut<CursorWorldPos>,
-    windows: Res<Windows>,
+    windows: Query<&Window, With<PrimaryWindow>>,
 ) {
     let (global_transform, camera) = query.single_mut();
 
-    // get current window - used to get the mouse cursors position for click events and drag movement
-    let wnd = if let RenderTarget::Window(id) = camera.target {
-        windows.get(id).unwrap()
-    } else {
-        windows.get_primary().unwrap()
+    let Ok(wnd) = windows.get_single() else {
+        return;
     };
 
     //if the cursor is inside the current window then we want to update the cursor position
