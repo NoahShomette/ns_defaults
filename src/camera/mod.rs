@@ -7,13 +7,13 @@
 //! will have to emit the [`ClickEvent`] events and work through that system.
 //!
 
-use std::slice::Windows;
 use bevy::render::camera::RenderTarget;
-use bevy::{math::Vec3, prelude::*, render::camera::Camera};
 use bevy::window::PrimaryWindow;
-use leafwing_input_manager::{Actionlike, InputManagerBundle};
+use bevy::{math::Vec3, prelude::*, render::camera::Camera};
 use leafwing_input_manager::prelude::{ActionState, InputManagerPlugin, InputMap, SingleAxis};
 use leafwing_input_manager::user_input::InputKind::Mouse;
+use leafwing_input_manager::{Actionlike, InputManagerBundle};
+use std::slice::Windows;
 
 /// A plugin containing the systems and resources for the Bevy_GGF camera system to function
 pub struct CameraPlugin;
@@ -142,7 +142,9 @@ fn camera_logic(
     mut camera_cursor_information: ResMut<CameraAndCursorInformation>,
     windows: Query<&Window, With<PrimaryWindow>>,
 ) {
-    let (mut ortho, action_state, camera) = query.single_mut();
+    let Ok( (mut ortho, action_state, camera)) = query.get_single_mut() else {
+        return;
+    };
     const CAMERA_ZOOM_RATE: f32 = 0.05;
 
     // get current window - used to get the mouse cursors position for click events and drag movement
@@ -224,8 +226,9 @@ fn click_handler(
     windows: Query<&Window, With<PrimaryWindow>>,
     mut click_event_writer: EventWriter<ClickEvent>,
 ) {
-    let (global_transform, camera) = query.single_mut();
-
+    let Ok( (global_transform, camera)) = query.get_single_mut() else {
+        return;
+    };
     let Ok(wnd) = windows.get_single() else {
         return;
     };
@@ -281,7 +284,9 @@ fn handle_camera_movement(
     camera_cursor_information: ResMut<CameraAndCursorInformation>,
     windows: Query<&Window, With<PrimaryWindow>>,
 ) {
-    let (mut transform, global_transform, camera) = query.single_mut();
+    let Ok( (mut transform, global_transform, camera)) = query.get_single_mut() else {
+        return;
+    };
 
     let Ok(wnd) = windows.get_single() else {
         return;
