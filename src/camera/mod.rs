@@ -67,7 +67,7 @@ const CLICK_DRAG_MIN_DISTANCE: f32 = 5.0;
 
 /// An enum representing the cameras actions used by Leafwing Input Manager
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug)]
-enum CameraMovementAction {
+pub enum CameraMovementAction {
     Click,
     Zoom,
     RightClick,
@@ -75,7 +75,7 @@ enum CameraMovementAction {
 
 /// An enum representing the current camera state
 #[derive(PartialEq, Eq, Clone, Copy, Hash, Debug)]
-enum CameraState {
+pub enum CameraState {
     None,
     LeftClickInitial,
     Dragging,
@@ -98,10 +98,10 @@ pub enum ClickEvent {
 
 /// Holds information needed by the camera logic and handler functions
 #[derive(Resource)]
-struct CameraAndCursorInformation {
-    last_frame_cursor_position: Vec2,
-    last_click_cursor_position: Vec2,
-    camera_state: CameraState,
+pub struct CameraAndCursorInformation {
+    pub last_frame_cursor_position: Vec2,
+    pub last_click_cursor_position: Vec2,
+    pub camera_state: CameraState,
 }
 
 impl Default for CameraAndCursorInformation {
