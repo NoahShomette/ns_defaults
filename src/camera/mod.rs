@@ -237,9 +237,10 @@ fn click_handler(
         match camera_cursor_information.camera_state {
             CameraState::LeftClick => {
                 info!("Left Click");
-                let ray = camera
-                    .viewport_to_world(global_transform, current_cursor_position)
-                    .unwrap();
+                let Some(ray) = camera
+                    .viewport_to_world(global_transform, current_cursor_position) else{
+                    return;
+                };
                 let new_position = ray.origin.truncate();
 
                 click_event_writer.send(ClickEvent::Click {
@@ -250,9 +251,10 @@ fn click_handler(
             CameraState::LeftClickHold => {
                 info!("Left Click Hold");
 
-                let ray = camera
-                    .viewport_to_world(global_transform, current_cursor_position)
-                    .unwrap();
+                let Some(ray) = camera
+                    .viewport_to_world(global_transform, current_cursor_position) else{
+                    return;
+                };
                 let new_position = ray.origin.truncate();
 
                 click_event_writer.send(ClickEvent::Hold {
@@ -263,9 +265,10 @@ fn click_handler(
             CameraState::RightClick => {
                 info!("Right Click");
 
-                let ray = camera
-                    .viewport_to_world(global_transform, current_cursor_position)
-                    .unwrap();
+                let Some(ray) = camera
+                    .viewport_to_world(global_transform, current_cursor_position) else{
+                    return;
+                };
                 let new_position = ray.origin.truncate();
 
                 click_event_writer.send(ClickEvent::RightClick {
@@ -309,10 +312,11 @@ fn handle_camera_movement(
                 x: window_size.x / 2.0 + x_dif,
                 y: window_size.y / 2.0 + y_dif,
             };
-
-            let ray = camera
-                .viewport_to_world(global_transform, position_to_get_world_point)
-                .unwrap();
+            
+            let Some(ray) = camera
+                .viewport_to_world(global_transform, current_cursor_position) else{
+                return;
+            };
             let new_position = ray.origin.truncate();
 
             let new_position = Vec3 {
@@ -340,9 +344,10 @@ fn update_cursor_world_pos(
 
     //if the cursor is inside the current window then we want to update the cursor position
     if let Some(current_cursor_position) = wnd.cursor_position() {
-        let ray = camera
-            .viewport_to_world(global_transform, current_cursor_position)
-            .unwrap();
+        let Some(ray) = camera
+            .viewport_to_world(global_transform, current_cursor_position) else{
+            return;
+        };
         cursor_world_pos.cursor_world_pos = ray.origin.truncate();
     }
 }
