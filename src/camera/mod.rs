@@ -7,13 +7,11 @@
 //! will have to emit the [`ClickEvent`] events and work through that system.
 //!
 
-use bevy::render::camera::RenderTarget;
 use bevy::window::PrimaryWindow;
 use bevy::{math::Vec3, prelude::*, render::camera::Camera};
 use leafwing_input_manager::prelude::{ActionState, InputManagerPlugin, InputMap, SingleAxis};
 use leafwing_input_manager::user_input::InputKind::Mouse;
 use leafwing_input_manager::{Actionlike, InputManagerBundle};
-use std::slice::Windows;
 
 /// A plugin containing the systems and resources for the Bevy_GGF camera system to function
 pub struct CameraPlugin;
@@ -31,22 +29,6 @@ impl Plugin for CameraPlugin {
     }
 }
 
-/* Temp storage. Want to figure out a way to make the camera be customizable - so you can set it to
-    pixel perfect or whatever else is wanted
-pub struct GGFCameraPlugins;
-
-impl PluginGroup for GGFCameraPlugins{
-    fn build(self) -> PluginGroupBuilder {
-        PluginGroupBuilder::na
-    }
-
-    fn set<T: Plugin>(self, plugin: T) -> PluginGroupBuilder {
-
-    }
-}
-
- */
-
 /// An enum used to represent what kind of Camera to spawn
 pub enum CameraType {
     Pixel2dCamera,
@@ -55,8 +37,24 @@ pub enum CameraType {
 
 /// Camera Bundle that incorporates the base Bevy Camera2D as well as any additional components needed
 #[derive(Bundle)]
-struct GGFCamera2dBundle {
+pub struct GGFCamera2dBundle {
     camera_2d_bundle: Camera2dBundle,
+    input_manager_bundle: InputManagerBundle<CameraMovementAction>
+}
+impl Default for GGFCamera2dBundle{
+    fn default() -> Self {
+        Self{
+            camera_2d_bundle: Default::default(),
+            input_manager_bundle: InputManagerBundle {
+                action_state: ActionState::default(),
+                input_map: InputMap::default()
+                    .insert(SingleAxis::mouse_wheel_y(), CameraMovementAction::Zoom)
+                    .insert(Mouse(MouseButton::Left), CameraMovementAction::Click)
+                    .insert(Mouse(MouseButton::Right), CameraMovementAction::RightClick)
+                    .build(),
+            },
+        }
+    }
 }
 
 /// How long the left mouse button needs to be held before its registered as a left click hold event
@@ -112,22 +110,6 @@ impl Default for CameraAndCursorInformation {
             camera_state: CameraState::None,
         }
     }
-}
-
-/// example showing how to set up the minimum camera
-pub fn startup(mut commands: Commands) {
-    commands
-        .spawn(GGFCamera2dBundle {
-            camera_2d_bundle: Camera2dBundle::default(),
-        })
-        .insert(InputManagerBundle {
-            action_state: ActionState::default(),
-            input_map: InputMap::default()
-                .insert(SingleAxis::mouse_wheel_y(), CameraMovementAction::Zoom)
-                .insert(Mouse(MouseButton::Left), CameraMovementAction::Click)
-                .insert(Mouse(MouseButton::Right), CameraMovementAction::RightClick)
-                .build(),
-        });
 }
 
 /// A simple logic system for setting the camera state to the right state. Handles the logic and then
@@ -314,7 +296,7 @@ fn handle_camera_movement(
             };
             
             let Some(ray) = camera
-                .viewport_to_world(global_transform, current_cursor_position) else{
+                .viewport_to_world(global_transform, position_to_get_world_point) else{
                 return;
             };
             let new_position = ray.origin.truncate();
