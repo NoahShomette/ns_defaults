@@ -39,11 +39,11 @@ pub enum CameraType {
 #[derive(Bundle)]
 pub struct GGFCamera2dBundle {
     camera_2d_bundle: Camera2dBundle,
-    input_manager_bundle: InputManagerBundle<CameraMovementAction>
+    input_manager_bundle: InputManagerBundle<CameraMovementAction>,
 }
-impl Default for GGFCamera2dBundle{
+impl Default for GGFCamera2dBundle {
     fn default() -> Self {
-        Self{
+        Self {
             camera_2d_bundle: Default::default(),
             input_manager_bundle: InputManagerBundle {
                 action_state: ActionState::default(),
@@ -218,7 +218,7 @@ fn click_handler(
     if let Some(current_cursor_position) = wnd.cursor_position() {
         match camera_cursor_information.camera_state {
             CameraState::LeftClick => {
-                info!("Left Click");
+                //info!("Left Click");
                 let Some(ray) = camera
                     .viewport_to_world(global_transform, current_cursor_position) else{
                     return;
@@ -231,7 +231,7 @@ fn click_handler(
                 camera_cursor_information.camera_state = CameraState::None;
             }
             CameraState::LeftClickHold => {
-                info!("Left Click Hold");
+                //info!("Left Click Hold");
 
                 let Some(ray) = camera
                     .viewport_to_world(global_transform, current_cursor_position) else{
@@ -245,7 +245,7 @@ fn click_handler(
                 camera_cursor_information.camera_state = CameraState::None;
             }
             CameraState::RightClick => {
-                info!("Right Click");
+                //info!("Right Click");
 
                 let Some(ray) = camera
                     .viewport_to_world(global_transform, current_cursor_position) else{
@@ -281,7 +281,7 @@ fn handle_camera_movement(
     if let Some(current_cursor_position) = wnd.cursor_position() {
         let window_size = Vec2::new(wnd.width(), wnd.height());
         if camera_cursor_information.camera_state == CameraState::Dragging {
-            info!("Dragging");
+            //info!("Dragging");
 
             //info!("ccp: {}", current_cursor_position);
             //info!("lcp: {}",camera_cursor_information.last_frame_cursor_position);
@@ -294,7 +294,7 @@ fn handle_camera_movement(
                 x: window_size.x / 2.0 + x_dif,
                 y: window_size.y / 2.0 + y_dif,
             };
-            
+
             let Some(ray) = camera
                 .viewport_to_world(global_transform, position_to_get_world_point) else{
                 return;
